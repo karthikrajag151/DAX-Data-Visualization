@@ -1,145 +1,139 @@
-# Power BI Project: DAX & Data Visualization – E-Commerce Sales Analysis
+# 📊 E-Commerce Sales Analysis using Power BI
+## DAX & Data Visualization | Data Analytics – Module 2
 
 ## 📌 Project Overview
 
-This project focuses on analyzing an E-Commerce Sales Dataset using **Microsoft Power BI, DAX (Data Analysis Expressions), and interactive data visualizations**.
+This project focuses on analyzing e-commerce sales performance using **Microsoft Power BI, DAX (Data Analysis Expressions), and interactive data visualizations**. As part of my Data Analytics learning journey, I worked with an e-commerce sales dataset to develop calculated columns, create analytical measures, and build interactive reports that help understand sales performance, profitability, order trends, and target achievement.
 
-As an aspiring Data Analyst, I developed this project to strengthen my skills in data analysis, business intelligence, DAX calculations, and dashboard development. Building on the data transformation and data modeling completed in the previous assignment, this project focuses on creating calculated columns, developing analytical measures, and designing interactive visualizations to evaluate sales performance, profitability, sales targets, and regional trends.
+The project builds on the data transformation and data modeling tasks completed in the previous Power BI assignment. The existing data model is used to perform DAX calculations and develop meaningful business insights through visual storytelling.
 
-The final Power BI report provides a consolidated view of key business metrics to support data-driven decision-making.
+This project demonstrates my foundational skills in data analysis, business intelligence, DAX calculations, and dashboard development as an aspiring Data Analyst.
 
 ## 🎯 Project Objectives
 
-- Create calculated columns using DAX to derive meaningful business attributes.
-- Develop DAX measures to calculate order counts, average profit, and year-to-date sales.
-- Compare actual sales performance against business targets.
-- Analyze sales and profit trends across categories, sub-categories, months, and states.
-- Visualize relationships between profit and quantity sold.
-- Identify geographical sales patterns across different cities.
-- Build an interactive and well-structured Power BI dashboard.
-- Translate analytical results into actionable business insights.
+- Analyze e-commerce sales and profitability using Power BI.
+- Create calculated columns to derive meaningful business attributes.
+- Develop DAX measures for order count, average profit, and year-to-date sales.
+- Compare actual sales against business targets across categories and months.
+- Analyze sales and profit performance across product sub-categories.
+- Identify geographic sales patterns across cities and states.
+- Build interactive visualizations to communicate business performance.
+- Present key performance indicators (KPIs) through a structured dashboard.
 
-## 📂 Dataset Description
+## 🗂️ Dataset Description
 
-The project uses three datasets representing order transactions, order details, and sales targets.
+The project uses three datasets representing order information, product-level order details, and sales targets.
 
 ### 1. List of Orders
 
-Contains order-level information about customers, locations, sales categories, and profitability.
+Contains order-level information about customers, locations, sales, and profitability.
 
-| Column | Description |
-|---|---|
-| Order ID | Unique identifier for an order |
-| Order Date | Date the order was placed |
-| Customer Name | Name of the customer |
-| City | City associated with the order |
-| State | State associated with the order |
-| Category | Product category |
-| Amount | Sales amount associated with the order |
-| Profit | Profit generated from the order |
+**Attributes:**
+- Order ID
+- Order Date
+- Customer Name
+- City
+- State
+- Category
+- Amount
+- Profit
 
 ### 2. Order Details
 
-Contains product-level information, including quantities, sub-categories, and financial values.
+Contains product category, sub-category, quantity, sales amount, and profit information.
 
-| Column | Description |
-|---|---|
-| Order ID | Identifier used to associate order details with orders |
-| Category | Main product category |
-| Sub-Category | More specific product classification |
-| Quantity | Number of units sold |
-| Amount | Sales amount recorded in the dataset |
-| Profit | Profit generated from the order details |
+**Attributes:**
+- Order ID
+- Category
+- Sub-Category
+- Quantity
+- Amount
+- Profit
 
 ### 3. Sales Target
 
 Contains monthly sales targets for different product categories.
 
-| Column | Description |
-|---|---|
-| Category | Product category |
-| Month of Order Date | Month associated with the sales target |
-| Target | Target sales amount for the category and month |
+**Attributes:**
+- Category
+- Month of Order Date
+- Target
 
-**Data modeling:** The relationships created in the previous assignment are retained to support analysis across the datasets. Appropriate relationship cardinality, filter direction, and date handling are important for accurate calculations.
+These datasets support the analysis of sales trends, profitability, product performance, and actual sales compared with targets.
 
 ## 🛠️ Tools and Technologies
 
-- **Microsoft Power BI Desktop** – Report development and dashboard creation
-- **DAX (Data Analysis Expressions)** – Calculated columns and measures
-- **Power Query Editor** – Data preparation inherited from the previous assignment
-- **Data Modeling** – Relationships between orders, order details, and sales targets
-- **Data Visualization** – Interactive charts, cards, maps, and matrices
-- **GitHub** – Project documentation and portfolio management
+- **Microsoft Power BI Desktop** – Report development and data visualization.
+- **DAX (Data Analysis Expressions)** – Calculated columns, measures, and time intelligence.
+- **Power Query** – Data preparation and transformation completed in the previous assignment.
+- **Data Modeling** – Relationships between orders, order details, and sales targets.
+- **GitHub** – Project documentation and portfolio presentation.
 
 ## 🧮 DAX Calculations
 
-### 1. Calculated Columns
+### A. Calculated Columns
 
-#### A. Category Type
+Calculated columns were created in the Order Details table to derive additional information for analysis.
 
-Combines the product category and sub-category into a single descriptive column in the Order Details table.
+#### 1. Category Type
+
+Combines the Category and Sub-Category columns into a single field.
 
 ```dax
 Category Type =
-'Order Details'[Category]
-    & " - "
-    & 'Order Details'[Sub-Category]
+'Order Details'[Category] & " - " &
+'Order Details'[Sub-Category]
 ```
 
-**Purpose:** Provides a combined product classification for filtering, grouping, and visual analysis.
+**Purpose:** Makes it easier to identify and analyze products using a combined category and sub-category label.
 
-#### B. Revenue per Order
+#### 2. Revenue per Order
 
-Calculates revenue using the Amount and Quantity columns, as specified in the assignment.
+Calculates revenue using the Amount and Quantity columns, following the assignment requirement.
 
 ```dax
 Revenue per Order =
-'Order Details'[Amount]
-    * 'Order Details'[Quantity]
+'Order Details'[Amount] *
+'Order Details'[Quantity]
 ```
 
 **Purpose:** Creates a derived revenue value for each row in the Order Details table.
 
-**Note:** Confirm the meaning of the Amount column before interpreting this metric. If Amount already represents the total sales value for a row, multiplying it by Quantity would double-count quantity. In that case, use Amount directly as the revenue value.
+**Note:** This calculation follows the assignment instructions. If Amount already represents the total sales value for the row, multiplying it by Quantity may double-count quantity. The business meaning of Amount should be validated before interpreting this column as revenue.
 
-#### C. Sales Category
+#### 3. Sales Category
 
-Classifies each row as Above Average or Below Average based on its Amount compared with the overall average Amount in the Order Details table.
+Categorizes each row as Above Average or Below Average based on its Amount compared with the average Amount in the Order Details table.
 
 ```dax
 Sales Category =
-VAR AverageAmount =
-    CALCULATE(
-        AVERAGE('Order Details'[Amount]),
-        REMOVEFILTERS('Order Details')
-    )
-RETURN
-    IF(
-        'Order Details'[Amount] >= AverageAmount,
-        "Above Average",
-        "Below Average"
-    )
+IF(
+    'Order Details'[Amount] >=
+        CALCULATE(
+            AVERAGE('Order Details'[Amount]),
+            ALL('Order Details')
+        ),
+    "Above Average",
+    "Below Average"
+)
 ```
 
-**Purpose:** Segments sales records according to their performance relative to the overall average amount. Records equal to the average are classified as Above Average.
+**Purpose:** Helps classify sales records relative to the overall average amount.
 
-### 2. Calculated Measures
+### B. Calculated Measures
 
-#### A. Order Count
+Measures were developed to calculate business metrics dynamically within Power BI reports.
 
-Counts distinct order IDs in the Order Details table.
+#### 1. Order Count
 
 ```dax
 Order Count =
 DISTINCTCOUNT('Order Details'[Order ID])
 ```
 
-**Purpose:** Measures the number of unique orders represented in the Order Details table.
+**Purpose:** Calculates the number of unique orders represented in the Order Details table. This avoids counting an order multiple times when it contains multiple product rows.
 
-#### B. Average Profit in Delhi
-
-Calculates the average profit for orders associated with Delhi.
+#### 2. Average Profit in Delhi
 
 ```dax
 Average Profit in Delhi =
@@ -149,162 +143,233 @@ CALCULATE(
 )
 ```
 
-**Purpose:** Evaluates the average order-level profit for Delhi.
+**Purpose:** Calculates the average profit for records associated with Delhi, respecting the applicable filter context.
 
-#### C. Year-to-Date (YTD) Sales
+#### 3. Year-to-Date (YTD) Sales
 
-Calculates cumulative sales from the beginning of the year through the current date in the report's date context.
+Assuming a properly configured Date table related to the order data:
 
 ```dax
 YTD Sales =
 TOTALYTD(
-    SUM('List of Orders'[Amount]),
+    [Total Sales],
     'Date'[Date]
 )
 ```
 
-**Purpose:** Tracks cumulative sales performance throughout the year.
+The base measure can be defined as:
 
-**Requirement:** The example assumes that a properly configured Date table named `Date` exists, with a continuous date column marked as the date table. The Date table must have an appropriate relationship with the order dates. If your model does not contain this table, create one and establish the relationship before using this measure.
+```dax
+Total Sales =
+SUM('Order Details'[Amount])
+```
 
-## 📊 Data Visualizations
+**Purpose:** Calculates cumulative sales from the beginning of the year through the selected date.
 
-The report includes the following visualizations to analyze different aspects of e-commerce performance.
+**Note:** The Date table should contain a continuous range of dates and be configured appropriately for time-intelligence calculations. If the assignment model does not include a Date table, create and relate one before using this YTD measure.
 
-| No. | Visualization | Chart Type | Business Purpose |
-|---|---|---|---|
-| 1 | Sales Target Achievement by Category | Clustered Column Chart | Compares actual sales and targets across product categories. |
-| 2 | Maximum Profit Margin by Sub-Category | Donut Chart | Displays the distribution of maximum profit-margin values across sub-categories. |
-| 3 | Monthly Sales Trend | Line Chart | Identifies monthly sales trends and changes over time. |
-| 4 | Profit vs. Quantity by Sub-Category | Scatter Chart | Examines the relationship between quantity sold and profit. |
-| 5 | Total Sales Amount vs. Target | Card Visuals | Provides a quick comparison of actual sales and sales targets. |
-| 6 | Minimum Target by Segment | Multi-row Card | Displays minimum target values for the relevant categories or segments. |
-| 7 | Sales Performance Matrix | Matrix | Compares actual sales and targets across categories and months. |
-| 8 | Geographic Sales Analysis | Map | Shows sales distribution across cities. |
-| 9 | Sales Distribution by Sub-Category | Treemap | Highlights the relative contribution of product sub-categories to sales. |
-| 10 | Order Count by State | Funnel Chart | Compares order counts across states. |
+## 📈 Data Visualizations
 
-### Visualization Details
+The Power BI report includes the following visualizations to explore sales performance and business trends.
 
-#### Sales Target Achievement by Category
-Compares actual sales with sales targets for each product category. It helps identify categories that meet, exceed, or fall short of their targets.
+### 1. Sales Target Achievement by Category
 
-#### Maximum Profit Margin by Sub-Category
-Uses a donut chart to compare maximum profit-margin values across product sub-categories. Profit margin should be calculated as profit divided by sales amount, with suitable handling for zero or blank sales values. Since maximum margin can be sensitive to individual records, interpret this chart alongside total profit and sales.
+**Visual:** Clustered Column Chart
 
-#### Monthly Sales Trend
-Displays sales over time using a line chart. It helps identify high-performing months, low-performing periods, and potential seasonal patterns.
+Compares actual sales with sales targets for each product category.
 
-#### Profit and Quantity by Sub-Category
-Uses a scatter chart to compare quantity sold with profit for different sub-categories. It helps identify high-volume products, profitable sub-categories, and products with high sales volume but low profitability.
+**Business purpose:**
+- Identify categories performing above or below their targets.
+- Compare sales performance across product categories.
+- Highlight categories that may require additional attention.
 
-#### Sales Amount and Target Cards
-Displays total actual sales and total sales target in separate cards, making it easy to assess overall target performance.
+### 2. Maximum Profit Margin by Sub-Category
 
-#### Minimum Target by Segment
-Uses a multi-row card to show the minimum target for each relevant category or segment.
+**Visual:** Donut Chart
 
-#### Sales Performance Matrix
-Presents sales and target values by category and month. It supports detailed comparisons, highlights performance gaps, and helps identify periods requiring further investigation.
+Displays the maximum profit margin calculated for each product sub-category.
 
-#### Geographic Sales Analysis
-Uses a map to visualize sales by city and identify regional differences in sales performance.
+**Business purpose:**
+- Compare maximum profit margin values across sub-categories.
+- Identify product segments with relatively high profitability measures.
 
-#### Sales Distribution by Sub-Category
-Uses a treemap to display the relative contribution of each sub-category to total sales. Larger rectangles represent higher sales values.
+**Note:** Profit margin is normally calculated as Profit divided by Sales Amount. A suitable measure should be created and aggregated consistently before using maximum profit margin in this chart.
 
-#### Order Count Analysis by State
-Uses a funnel chart to compare order counts across states. It helps identify states with higher and lower order volumes, although a bar chart may be more suitable for precise comparisons between independent states.
+### 3. Monthly Sales Trend
 
-## 📈 Business Questions Addressed
+**Visual:** Line Chart
 
-This project is designed to answer the following business questions:
+Shows sales movement over time using monthly sales values.
 
-- Which product categories perform best against their sales targets?
+**Business purpose:**
+- Identify changes in sales across months.
+- Recognize seasonal patterns and fluctuations.
+- Monitor overall sales performance over time.
+
+### 4. Profit and Quantity Comparison by Sub-Category
+
+**Visual:** Scatter Chart
+
+Compares profit and quantity sold for different product sub-categories.
+
+**Business purpose:**
+- Identify sub-categories with higher profits and sales quantities.
+- Explore the relationship between quantity sold and profitability.
+- Identify products that sell in high volumes but generate relatively low profits.
+
+### 5. Total Sales Amount and Sales Target
+
+**Visuals:** Card Visuals and Multi-Row Card
+
+Displays the total sales amount, overall sales target, and minimum target for each segment represented in the report.
+
+**Business purpose:**
+- Present important business KPIs at a glance.
+- Compare actual sales with planned targets.
+- Identify segments with lower target values.
+
+### 6. Sales Performance Matrix
+
+**Visual:** Matrix
+
+Displays actual sales and sales targets across product categories and months.
+
+**Business purpose:**
+- Compare monthly sales with targets.
+- Identify high-performing and underperforming categories.
+- Examine sales performance across different periods.
+
+### 7. Geographic Sales Analysis
+
+**Visual:** Map
+
+Displays total sales by city to explore geographic sales patterns.
+
+**Business purpose:**
+- Identify cities contributing significantly to sales.
+- Compare sales performance across locations.
+- Highlight geographic areas that may offer growth opportunities.
+
+### 8. Sales Distribution by Sub-Category
+
+**Visual:** Treemap
+
+Represents sales distribution across product sub-categories using differently sized rectangles.
+
+**Business purpose:**
+- Identify sub-categories contributing the largest share of sales.
+- Compare the relative importance of product segments.
+- Understand how sales are distributed across the product portfolio.
+
+### 9. Order Count Analysis by State
+
+**Visual:** Funnel Chart
+
+Displays order counts across different states.
+
+**Business purpose:**
+- Compare order volumes between states.
+- Identify states with relatively high or low order counts.
+- Support geographic performance analysis.
+
+**Note:** A funnel chart is generally designed for sequential stages. For independent state comparisons, a bar chart is often more suitable, but the funnel chart is retained to meet the assignment requirement.
+
+## 🔍 Business Analysis and Key Questions
+
+This project supports the exploration of several business questions:
+
+- Which product categories achieve their sales targets?
 - How do monthly sales change over time?
-- Which sub-categories contribute to sales and profitability?
-- Is there a relationship between quantity sold and profit?
-- What is the average profit generated by orders in Delhi?
-- How many unique orders are represented in the dataset?
-- Which cities and states contribute to regional sales performance?
-- How do actual sales compare with monthly category targets?
-- Which categories and periods require additional attention to achieve sales goals?
+- Which sub-categories generate higher profits?
+- How does quantity sold relate to profitability?
+- Which cities and states contribute to sales performance?
+- Which product sub-categories account for the largest share of sales?
+- How does actual sales performance compare with monthly targets?
+- What is the average profit for orders associated with Delhi?
 
-## 💡 Business Insights and Recommendations
+The answers can help business stakeholders understand performance, identify areas requiring investigation, and make more informed decisions.
 
-The following insights can be investigated using the completed report. Actual findings should be added after validating the results in Power BI.
+## 💡 Potential Business Recommendations
 
-- **Target performance:** Identify categories consistently exceeding their targets and investigate the reasons behind their performance.
-- **Sales trends:** Examine monthly peaks and declines to support inventory planning and promotional decisions.
-- **Profitability:** Compare profit and sales volume to identify sub-categories that generate strong profit despite lower quantities sold.
-- **Regional performance:** Identify cities and states with strong or weak sales contributions and investigate local demand.
-- **Product mix:** Use the treemap and category comparisons to identify important contributors to overall sales.
-- **Target gaps:** Use the matrix to locate categories and months where actual sales are below target and recommend targeted sales initiatives.
+The following are possible recommendations to evaluate after reviewing the actual report results:
+
+- **Improve target achievement:** Investigate categories that consistently fall below their sales targets and identify potential causes.
+- **Optimize product performance:** Review low-profit sub-categories to understand their pricing, costs, and sales volumes.
+- **Strengthen regional sales:** Explore opportunities in cities and states with lower order volumes or sales contributions.
+- **Monitor monthly trends:** Use historical sales patterns to support inventory planning and sales forecasting.
+- **Focus on profitable growth:** Evaluate sales volume alongside profit and profit margin instead of relying only on revenue.
+- **Track KPIs consistently:** Monitor sales, targets, order counts, and profitability through an interactive dashboard.
+
+These recommendations should be finalized only after validating the actual findings from the completed Power BI report.
+
+## 📊 Dashboard Design
+
+The report is designed to present business metrics and visual comparisons in a clear and interactive format.
+
+The dashboard brings together:
+- Sales and target comparison.
+- Monthly sales trends.
+- Profitability and quantity analysis.
+- Category and sub-category performance.
+- Geographic sales distribution.
+- Order count analysis by state.
+- KPI cards for quick performance monitoring.
+
+Appropriate titles, labels, formatting, and consistent visual organization help users interpret the information efficiently.
 
 ## 📁 Project Structure
 
-The GitHub repository can be organized as follows:
-
 ```text
-Power-BI-DAX-Data-Visualization/
+E-Commerce-Sales-Analysis-PowerBI/
 │
 ├── DAX & Data Visualization.pbix
 ├── README.md
 │
-├── screenshots/
-│   ├── dashboard-overview.png
-│   ├── dax-calculated-columns.png
-│   ├── dax-measures.png
-│   ├── sales-target-analysis.png
-│   ├── monthly-sales-trend.png
-│   ├── profitability-analysis.png
-│   ├── geographic-sales-analysis.png
-│   └── sales-performance-matrix.png
-│
-└── documentation/
-    └── DAX-and-Visualization-Report.pdf
+└── Screenshots/
+    ├── dashboard-overview.png
+    ├── dax-calculated-columns.png
+    ├── dax-measures.png
+    ├── sales-target-by-category.png
+    ├── monthly-sales-trend.png
+    ├── profit-quantity-analysis.png
+    ├── sales-performance-matrix.png
+    └── geographic-sales-analysis.png
 ```
 
-*The folders and screenshot filenames above are suggested. Add the files once they have been created and verified.*
+*The folder and screenshot names above are suggested examples. Add the files that you actually include in your repository.*
 
 ## 📦 Deliverables
 
-The project deliverables include:
+- **Power BI report (.pbix):** Includes the existing data model, calculated columns, DAX measures, and visualizations.
+- **Project documentation (README.md):** Explains the objectives, datasets, calculations, visualizations, and business applications.
+- **PDF report:** Contains screenshots of DAX formulas, visualizations, dashboard layout, and brief explanations of each visual.
 
-1. **Power BI report (.pbix):** Contains the data model, calculated columns, DAX measures, visualizations, and report layout.
-2. **PDF documentation:** Contains screenshots of DAX formulas, completed visualizations, the dashboard layout, and brief explanations of each visual.
-3. **GitHub README:** Documents the project objectives, dataset structure, calculations, visualizations, and analytical approach.
+## 🎓 Skills Demonstrated
 
-## 🚀 Skills Demonstrated
+- DAX calculated columns and measures.
+- Aggregation and filter context.
+- Distinct order counting.
+- Conditional logic using `IF` and `CALCULATE`.
+- Time intelligence using `TOTALYTD`.
+- Sales and profitability analysis.
+- Target achievement analysis.
+- Data visualization and dashboard development.
+- Data modeling and relationship awareness.
+- Business interpretation and analytical thinking.
+- Technical documentation using GitHub Markdown.
 
-- DAX calculated columns and measures
-- Aggregation and filter-context management
-- Time intelligence and YTD analysis
-- Data modeling and table relationships
-- Sales and profitability analysis
-- Target achievement analysis
-- Interactive dashboard development
-- Data storytelling and business interpretation
-- Analytical problem-solving
-- Technical documentation using GitHub
+## 🚀 Learning Outcomes
 
-## 🔍 Conclusion
+Through this project, I strengthened my understanding of how Power BI transforms business data into meaningful analytical reports. I practiced creating calculated columns and measures, applying DAX logic, comparing sales against targets, analyzing time-based trends, and selecting visualizations to communicate business performance.
 
-This project demonstrates how Power BI and DAX can transform e-commerce sales data into meaningful business metrics and interactive reports. By combining calculated columns, analytical measures, and multiple visualization types, the report supports the evaluation of sales performance, profitability, target achievement, and regional trends.
-
-As an aspiring Data Analyst, this project represents a step toward building practical skills in business intelligence, analytical reporting, and data-driven decision-making.
+This project is part of my ongoing journey toward becoming a **Data Analyst**, where I am building practical skills in Excel, Power BI, data analysis, and business intelligence.
 
 ## 👤 Author
 
 **Aspiring Data Analyst**
 
-Interested in data analytics, business intelligence, data visualization, and transforming raw data into actionable business insights.
-
-## 📌 Project Status
-
-Completed as part of the **Data Analytics (DA) – Module 2: Power BI Assignment 2 – DAX & Data Visualization** learning program.
+I am developing my portfolio through hands-on projects focused on data cleaning, analysis, visualization, and business insights using tools such as Microsoft Excel and Power BI.
 
 ---
 
-*This project is intended for educational and portfolio purposes. Business insights and recommendations should be finalized after validating the actual Power BI report results.*
-# DAX-Data-Visualization
+⭐ If you find this project useful, feel free to explore the repository and review the Power BI report and documentation.
