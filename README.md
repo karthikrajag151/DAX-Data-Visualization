@@ -1,5 +1,5 @@
 # 📊 E-Commerce Sales Analysis using Power BI
-## DAX & Data Visualization | Data Analytics – Module 2
+## DAX & Data Visualization
 
 ## 📌 Project Overview
 
